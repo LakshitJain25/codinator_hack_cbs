@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" style="margin-left: -8px">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="css/fontawesome.css">
+    <link rel="stylesheet" href="css/templatemo-grad-school.css">
+    <link rel="stylesheet" href="css/owl.css">
+    <link rel="stylesheet" href="css/lightbox.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/playground.css">
+</head>
+
+<body>
+    <!--header-->
+    <header class="main-header clearfix" role="header">
+        <div class="logo">
+            <a href="#"><em>Cod</em>inator</a>
+        </div>
+        <a href="#menu" class="menu-link"><i class="fa fa-bars"></i></a>
+        <nav id="menu" class="main-nav" role="navigation">
+            <ul class="main-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li class="active"><a href="playground.html">Playground</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- <h1 class="play-head">Playground</h1> -->
+    <div class="container main-container">
+        <div class="row">
+            <div id="speechToCode" class="col-6">
+                <div class="form-group">
+                    <label for="algoTextarea">Provide Algorithm</label>
+                    <textarea class="form-control" id="algoTextarea" rows="22"
+                        placeholder="Speak or click to write the algo"></textarea>
+                </div>
+                <button id="newAlgoBtn" class="btn btn-dark">New Algo</button>
+                <button id="newLineBtn" class="btn btn-dark">New line</button>
+                <button id="speechSend" class="btn btn-primary">Convert to code</button>
+            </div>
+            <div class="col-6">
+                <label for="language">Language: </label>
+                <select name="language" class="form-select" aria-label="Default select example" id="language-select">
+                    <option value="python" selected>Python</option>
+                    <option value="javaScript">Javascript</option>
+                    <!-- <option value="cpp">C++</option> -->
+                </select>
+
+                <div class="editor-container">
+                    <div id="container" style="width:930px;height:540px;border:1px solid grey"></div>
+
+                    <div class="output-container" id="output-hide-show">
+                        <h4>Output</h4>
+                        <div id="output-area"></div>
+                    </div>
+
+                    <div class="editor-bottom-bar">
+                        <div class="convert-lang-btn">
+                            <button id="algo-to-code" class="btn btn-dark">Write Code</button>
+
+                            <button id="code-to-code" class="btn btn-dark">Convert Code</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-info" id="btn-output">Output box</button>
+                            <button class="btn btn-primary" id="btn-run">Run</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.22.3/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.22.3/min/vs' } });
+        let editor;
+        var isHide = false
+
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('container'), {
+                language: 'python',
+                theme: 'vs-dark',
+            });
+        });
+
+        const languageSelect = document.getElementById('language-select')
+        languageSelect.addEventListener('change', (event) => {
+            monaco.editor.setModelLanguage(editor.getModel(), event.target.value)
+        })
+        const BASE_URL = 'http://localhost:3001'
+
+        const languageBtn = document.getElementById('btn-run')
+        languageBtn.addEventListener('click', async (event) => {
+            $("#output-hide-show").show();
+            isHide = false
+            languageBtn.disabled = true
+            const data = {
+                language: languageSelect.value,
+                code: editor.getValue()
+            }
+
+            console.log(data)
+            const response = await fetch(`${BASE_URL}/code/exec`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            response.json().then(data => {
+                console.log("data.output", data.output)
+                const outputDiv = document.getElementById('output-area')
+                outputDiv.innerText = data.output
+            }).catch(err => {
+                console.log(err)
+            }).finally(() => {
+                languageBtn.disabled = false
+            })
+        })
+
+        const WriteCodeBtn = document.getElementById('algo-to-code')
+        WriteCodeBtn.addEventListener('click', async (event) => {
+            WriteCodeBtn.disabled = true
+            const data = {
+                language: languageSelect.value,
+                code: editor.getValue()
+            }
+
+            console.log(data)
+            const response = await fetch(`${BASE_URL}/code/write`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            response.json().then(data => {
+                var selection = editor.getSelection();
+                var id = { major: 1, minor: 1 };
+                var text = data.choices[0].text;
+                var op = { identifier: id, range: selection, text: text, forceMoveMarkers: true };
+                editor.executeEdits("my-source", [op]);
+            }).catch(err => {
+                console.log(err)
+            }).finally(() => {
+                WriteCodeBtn.disabled = false
+            })
+        })
+
+        const OutputBoxBtn = document.getElementById("btn-output")
+
+        OutputBoxBtn.addEventListener("click", () => {
+            if (!isHide) {
+                $("#output-hide-show").hide();
+                isHide = true
+            } else {
+                $("#output-hide-show").show();
+                isHide = false
+            }
+
+        })
+
+        const ConvertCodeBtn = document.getElementById('code-to-code')
+        ConvertCodeBtn.addEventListener('click', async (event) => {
+            ConvertCodeBtn.disabled = true
+            const data = {
+                language: languageSelect.value,
+                code: editor.getValue()
+            }
+
+            console.log(data)
+            const response = await fetch(`${BASE_URL}/code/convert`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            response.json().then(data => {
+                var selection = editor.getSelection();
+                var id = { major: 1, minor: 1 };
+                var text = data.choices[0].text;
+                var op = { identifier: id, range: selection, text: text, forceMoveMarkers: true };
+                editor.executeEdits("my-source", [op]);
+            }).catch(err => {
+                console.log(err)
+            }).finally(() => {
+                ConvertCodeBtn.disabled = false
+            })
+        })
+
+
+        const SpeechSendButton = document.getElementById('speechSend')
+        SpeechSendButton.addEventListener('click', async (event) => {
+            let algoTextArea = document.getElementById('algoTextarea');
+            console.log("TExtArea:", algoTextArea.value)
+            WriteCodeBtn.disabled = true
+            const data = {
+                language: languageSelect.value,
+                code: algoTextArea.value
+            }
+
+            console.log(data)
+            const response = await fetch(`${BASE_URL}/code/write`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            response.json().then(data => {
+                var selection = editor.getSelection();
+                var id = { major: 1, minor: 1 };
+                var text = data.choices[0].text;
+                var op = { identifier: id, range: selection, text: text, forceMoveMarkers: true };
+                editor.executeEdits("my-source", [op]);
+            }).catch(err => {
+                console.log(err)
+            }).finally(() => {
+                WriteCodeBtn.disabled = false
+            })
+        })
+
+        let algoTextArea = document.getElementById('algoTextarea');
+        let newAlgoBtn = document.getElementById('newAlgoBtn')
+        let newLineBtn = document.getElementById('newLineBtn');
+
+
+        function updateScrollGeneral(el) {
+            el.scrollTop = el.scrollHeight;
+        }
+
+        newAlgoBtn.addEventListener('click', () => {
+            try {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+            }
+            catch (e) {
+                console.log(e);
+            }
+            recognition.continuous = true;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+            recognition.start();
+            recognition.onstart = function () {
+                console.log('Voice recognition activated. Try speaking into the microphone.');
+            }
+
+            recognition.onerror = function (event) {
+                if (event.error == 'no-speech') {
+                    console.log('No speech was detected. Try again.');
+                };
+            }
+            let newSubtitles = algoTextArea.value;
+
+            recognition.onresult = function (event) {
+                console.log("speech: ", event.results[current][0].transcript)
+                let current = event.resultIndex;
+                let transcript = event.results[current][0].transcript;
+                newSubtitles += transcript;
+                algoTextArea.value = newSubtitles;
+                updateScrollGeneral(algoTextArea);
+            };
+
+        })
+
+        newLineBtn.addEventListener('click', () => {
+            algoTextArea.value += '.\n';
+        })
+    </script>
+</body>
+
+</html>

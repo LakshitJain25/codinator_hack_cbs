@@ -1,0 +1,36 @@
+.main-container {
+    margin-top: 95px !important;
+}
+
+.editor-container {
+    max-width: 800px;
+    position: relative;
+}
+
+.editor-bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 930px;
+    padding-top: 5px;
+    /* margin-top: 10px; */
+}
+
+.output-container > h4 {
+    text-align: center;
+}
+
+.output-container {
+    position: absolute;
+    bottom: 0;
+    height: 200px;
+    width: 930px;
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    overflow-y: scroll;
+    padding-left: 20px;
+}
+
+.container{
+    margin: 40px 0 10px 10px;
+}
