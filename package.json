@@ -1,0 +1,20 @@
+{
+  "name": "hackathon_cbs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LakshitJain25/codinator_hack_cbs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LakshitJain25/codinator_hack_cbs/issues"
+  },
+  "homepage": "https://github.com/LakshitJain25/codinator_hack_cbs#readme"
+}
