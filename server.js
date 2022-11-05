@@ -4,11 +4,26 @@ const path = require('path')
 const { Configuration, OpenAIApi } = require("openai");
 const fs = require('fs')
 const { spawn } = require('child_process')
+const { auth, requiresAuth } = require('express-openid-connect');
 
 const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
+
+app.use(
+    auth({
+      authRequired: false,
+      auth0Logout: true,
+      issuerBaseURL: process.env.ISSUER_BASE_URL,
+      baseURL: process.env.BASE_URL,
+      clientID: process.env.CLIENT_ID,
+      secret: process.env.SECRET,
+      idpLogout: true,
+    })
+  );
+
+
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API,
@@ -96,6 +111,19 @@ app.post('/code/convert', async (req, res) => {
         });
 })
 
+
+app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(`hello ${req.oidc.user.name}`);
+});
+
+app.get('/auth', (req, res) => {
+    console.log("CHECKING")
+    res.send(req.oidc.isAuthenticated())
+})
+
+app.get('/playground', requiresAuth(), (req,res) => {
+    res.redirect('/assets/playground.html');
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

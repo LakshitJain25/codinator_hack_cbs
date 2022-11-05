@@ -25,7 +25,7 @@
         <nav id="menu" class="main-nav" role="navigation">
             <ul class="main-menu">
                 <li class="active"><a href="index.html" class="external">Home</a></li>
-                <li><a href="assets/playground.html" class="external">Playground</a></li>
+                <li class="homepagelogin"><a href="/playground" class="external">Playground</a></li>
             </ul>
         </nav>
     </header>
@@ -300,8 +300,9 @@
         </div>
     </footer>
 
-    <script src="./assets/bootstrap/bootstrap.min.js"></script>
     <script src="./assets/jquery/jquery.min.js"></script>
+    <script src="./assets/bootstrap/bootstrap.min.js"></script>
+    
     <script src="assets/js/isotope.min.js"></script>
     <script src="assets/js/owl-carousel.js"></script>
     <script src="assets/js/lightbox.js"></script>
@@ -356,6 +357,17 @@
             $('#menu').removeClass('active');
             showSection($(this).attr('href'), true);
         });
+
+        fetch("http://localhost:3001/auth").then((res)=>{
+            console.log("FETCHONG")
+            return res.json()}).then((data)=>{
+                console.log(data)
+                if(data){
+                    document.querySelector('.homepagelogin').innerHTML = '<a href="/playground" class="external">Playground</a>'
+                }else{
+                    document.querySelector('.homepagelogin').innerHTML = '<a href="/login"  class="external">Login</a>'
+                }
+            })
 
         $(window).scroll(function () {
             checkSection();

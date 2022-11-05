@@ -28,6 +28,7 @@
         <a href="#menu" class="menu-link"><i class="fa fa-bars"></i></a>
         <nav id="menu" class="main-nav" role="navigation">
             <ul class="main-menu">
+                <li><a href="/logout">Logout</a></li>
                 <li><a href="../index.html">Home</a></li>
                 <li class="active"><a href="playground.html">Playground</a></li>
             </ul>
@@ -251,32 +252,34 @@
                 var recognition = new SpeechRecognition();
             }
             catch (e) {
-                console.log(e);
+
             }
             recognition.continuous = true;
             recognition.lang = 'en-US';
             recognition.maxAlternatives = 1;
-            recognition.start();
-            recognition.onstart = function () {
-                console.log('Voice recognition activated. Try speaking into the microphone.');
-            }
 
+            recognition.onstart = function (e) {
+                console.log("RECO",e)
+                console.log('Voice recognition activat. Try speaking into the microphone.');
+            }
+            recognition.onspeechend = function () {
+                recognition.stop();
+            }
             recognition.onerror = function (event) {
                 if (event.error == 'no-speech') {
                     console.log('No speech was detected. Try again.');
                 };
             }
             let newSubtitles = algoTextArea.value;
-
             recognition.onresult = function (event) {
-                console.log("speech: ", event.results[current][0].transcript)
+                console.log("speech: ", event)
                 let current = event.resultIndex;
                 let transcript = event.results[current][0].transcript;
                 newSubtitles += transcript;
                 algoTextArea.value = newSubtitles;
                 updateScrollGeneral(algoTextArea);
             };
-
+            recognition.start();
         })
 
         newLineBtn.addEventListener('click', () => {
