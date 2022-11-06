@@ -13,15 +13,15 @@ app.use(express.json())
 
 app.use(
     auth({
-      authRequired: false,
-      auth0Logout: true,
-      issuerBaseURL: process.env.ISSUER_BASE_URL,
-      baseURL: process.env.BASE_URL,
-      clientID: process.env.CLIENT_ID,
-      secret: process.env.SECRET,
-      idpLogout: true,
+        authRequired: false,
+        auth0Logout: true,
+        issuerBaseURL: process.env.ISSUER_BASE_URL,
+        baseURL: process.env.BASE_URL,
+        clientID: process.env.CLIENT_ID,
+        secret: process.env.SECRET,
+        idpLogout: true,
     })
-  );
+);
 
 
 
@@ -45,6 +45,7 @@ const createUserFile = fileObj => {
     fs.writeFileSync(filePath, fileObj.code)
     return filePath.toString()
 }
+
 
 app.post('/code/exec', (req, res) => {
     const submissionLang = req.body.language
@@ -111,6 +112,10 @@ app.post('/code/convert', async (req, res) => {
         });
 })
 
+app.get('/', (req,res) => {
+    console.log("HELLO")
+    res.send("CHECK")
+})
 
 app.get('/profile', requiresAuth(), (req, res) => {
     res.send(`hello ${req.oidc.user.name}`);
@@ -121,7 +126,7 @@ app.get('/auth', (req, res) => {
     res.send(req.oidc.isAuthenticated())
 })
 
-app.get('/playground', requiresAuth(), (req,res) => {
+app.get('/playground', requiresAuth(), (req, res) => {
     res.redirect('/assets/playground.html');
 })
 
