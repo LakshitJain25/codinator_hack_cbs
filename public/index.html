@@ -358,7 +358,7 @@
             showSection($(this).attr('href'), true);
         });
 
-        fetch("https://codinator.herokuapp.com/auth").then((res)=>{
+        fetch("http://localhost:3001/auth").then((res)=>{
             console.log("FETCHONG")
             return res.json()}).then((data)=>{
                 console.log(data)

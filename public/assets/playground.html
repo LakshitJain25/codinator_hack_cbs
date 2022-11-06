@@ -49,8 +49,8 @@
                 <button id="speechSend" class="btn btn-primary">Convert to code</button>
             </div>
             <div class="col-6">
-                <label for="language">Language: </label>
-                <select name="language" class="form-select" aria-label="Default select example" id="language-select">
+                <label for="language" style="opacity: 0;">Language: </label>
+                <select name="language" class="form-select" aria-label="Default select example" id="language-select" style="opacity: 0;">
                     <option value="python" selected>Python</option>
                     <option value="javaScript">Javascript</option>
                     <!-- <option value="cpp">C++</option> -->
@@ -99,7 +99,7 @@
         languageSelect.addEventListener('change', (event) => {
             monaco.editor.setModelLanguage(editor.getModel(), event.target.value)
         })
-        const BASE_URL = 'https://codinator.herokuapp.com'
+        const BASE_URL = 'http://localhost:3001'
 
         const languageBtn = document.getElementById('btn-run')
         languageBtn.addEventListener('click', async (event) => {

@@ -80,7 +80,7 @@ app.post('/code/write', async (req, res) => {
     const outputCode = await openai.createCompletion("text-davinci-001", {
         prompt: `Write code by following these instructions:\n${text}`,
         max_tokens: 500,
-        temperature: 0.5,
+        temperature: 0.2,
     }).then(response => {
         if (!response) throw Error;
 
@@ -99,7 +99,7 @@ app.post('/code/convert', async (req, res) => {
     const outputCode = await openai.createCompletion("text-davinci-001", {
         prompt: `Convert this piece of code from ${text}`,
         max_tokens: 500,
-        temperature: 0.5,
+        temperature: 0.2,
     }).then(response => {
         if (!response) throw Error;
 
