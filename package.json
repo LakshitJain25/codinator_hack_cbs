@@ -1,0 +1,30 @@
+{
+  "name": "hackathon_cbs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-openid-connect": "^2.9.0",
+    "openai": "^2.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LakshitJain25/codinator_hack_cbs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LakshitJain25/codinator_hack_cbs/issues"
+  },
+  "homepage": "https://github.com/LakshitJain25/codinator_hack_cbs#readme"
+}
